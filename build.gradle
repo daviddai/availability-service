@@ -8,29 +8,15 @@ group = 'ddai'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
 repositories {
+	mavenLocal()
 	mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-amqp'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'mysql:mysql-connector-java'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
-	testImplementation 'org.springframework.amqp:spring-rabbit-test'
-}
+	compile 'ddai:event-bus:1.0-SNAPSHOT'
+    compile 'org.springframework.boot:spring-boot-dependencies:2.0.5.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-web'
 
-test {
-	useJUnitPlatform()
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
