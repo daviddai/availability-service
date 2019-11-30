@@ -1,0 +1,11 @@
+version : '2'
+services:
+  avail-service:
+    container_name: avail-service
+    tty: true
+    build: ../
+    ports:
+      - "8083:8083"
+      - "4083:4083"
+    volumes:
+      - ../build/libs:/vol/development/
