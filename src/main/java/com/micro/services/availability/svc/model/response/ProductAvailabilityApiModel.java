@@ -10,17 +10,14 @@ public class ProductAvailabilityApiModel {
 
     private String productCode;
     private List<LocalDate> availabilities;
-    private List<LocalDate> unavailabilities;
 
     private ProductAvailabilityApiModel() {}
 
     @JsonCreator
     public ProductAvailabilityApiModel(@JsonProperty("productCode") String productCode,
-                                       @JsonProperty("availabilities") List<LocalDate> availabilities,
-                                       @JsonProperty("unavailabilities") List<LocalDate> unavailabilities) {
+                                       @JsonProperty("availabilities") List<LocalDate> availabilities) {
         this.productCode = productCode;
         this.availabilities = availabilities;
-        this.unavailabilities = unavailabilities;
     }
 
     public String getProductCode() {
@@ -29,10 +26,6 @@ public class ProductAvailabilityApiModel {
 
     public List<LocalDate> getAvailabilities() {
         return availabilities;
-    }
-
-    public List<LocalDate> getUnavailabilities() {
-        return unavailabilities;
     }
 
     public static class Builder {
@@ -50,11 +43,6 @@ public class ProductAvailabilityApiModel {
 
         public Builder withAvailabilities(List<LocalDate> availabilities) {
             productAvailabilityApiModel.availabilities = availabilities;
-            return this;
-        }
-
-        public Builder withUnavailabilities(List<LocalDate> unavailabilities) {
-            productAvailabilityApiModel.unavailabilities = unavailabilities;
             return this;
         }
 

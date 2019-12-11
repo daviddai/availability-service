@@ -3,8 +3,8 @@ package com.micro.services.availability.svc.service;
 import com.micro.services.availability.svc.model.response.ProductAvailabilityApiModel;
 
 import com.micro.services.event.bus.event.ProductAvailabilityUpdated;
-import com.micro.services.event.bus.event.model.ProductAvailability;
-import com.micro.services.event.bus.event.model.ProductAvailabilityRule;
+import com.micro.services.event.bus.event.model.ProductAccessibility;
+import com.micro.services.event.bus.event.model.ProductAccessibilityDateRange;
 import com.micro.services.event.bus.subscriber.annotation.EventSubscriber;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +19,11 @@ import java.util.stream.IntStream;
 @Service
 public class ProductAvailService {
 
-    private Map<String, ProductAvailability> productAvailabilities = new HashMap<>();
+    private Map<String, ProductAccessibility> productAccessibilityMap = new HashMap<>();
 
     public ProductAvailabilityApiModel getAvailability(String productCode) {
 
-        ProductAvailability productAvailability = productAvailabilities.entrySet()
+        ProductAccessibility productAccessibility = productAccessibilityMap.entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().equals(productCode))
                 .findAny()
@@ -31,16 +31,15 @@ public class ProductAvailService {
                 .orElseThrow(() -> new RuntimeException("Product code " + productCode + " does not exist"));
 
         return new ProductAvailabilityApiModel.Builder()
-                .withProductCode(productAvailability.getProductCode())
-                .withAvailabilities(getDatesByRules(productAvailability.getAvailabilityRules()))
-                .withUnavailabilities(getDatesByRules(productAvailability.getUnavailabilityRules()))
+                .withProductCode(productAccessibility.getProductCode())
+                .withAvailabilities(getDatesByRules(productAccessibility.getAccessibilityDateRanges()))
                 .build();
     }
 
-    private List<LocalDate> getDatesByRules(List<ProductAvailabilityRule> productAvailabilityRules) {
-        return productAvailabilityRules.stream()
-                .map(productAvailabilityRule ->
-                        this.getDatesBetween(productAvailabilityRule.getStartDate(), productAvailabilityRule.getEndDate()))
+    private List<LocalDate> getDatesByRules(List<ProductAccessibilityDateRange> productAccessibilityDateRanges) {
+        return productAccessibilityDateRanges.stream()
+                .map(productAccessibilityDateRange ->
+                        this.getDatesBetween(productAccessibilityDateRange.getFrom(), productAccessibilityDateRange.getTo()))
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
@@ -54,8 +53,8 @@ public class ProductAvailService {
 
     @EventSubscriber
     public void updateAvailability(ProductAvailabilityUpdated productAvailabilityUpdated) {
-        ProductAvailability productAvailability = productAvailabilityUpdated.getProductAvailability();
-        productAvailabilities.put(productAvailability.getProductCode(), productAvailability);
+        ProductAccessibility productAvailability = productAvailabilityUpdated.getProductAccessibility();
+        productAccessibilityMap.put(productAvailability.getProductCode(), productAvailability);
     }
 
 }
