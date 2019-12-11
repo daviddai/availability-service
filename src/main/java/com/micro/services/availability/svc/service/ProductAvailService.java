@@ -4,11 +4,17 @@ import com.micro.services.availability.svc.model.response.ProductAvailabilityApi
 
 import com.micro.services.event.bus.event.ProductAvailabilityUpdated;
 import com.micro.services.event.bus.event.model.ProductAvailability;
+import com.micro.services.event.bus.event.model.ProductAvailabilityRule;
 import com.micro.services.event.bus.subscriber.annotation.EventSubscriber;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ProductAvailService {
@@ -26,9 +32,24 @@ public class ProductAvailService {
 
         return new ProductAvailabilityApiModel.Builder()
                 .withProductCode(productAvailability.getProductCode())
-                .withAvailabilities(productAvailability.getAvailabilities())
-                .withUnavailabilities(productAvailability.getUnavailabilities())
+                .withAvailabilities(getDatesByRules(productAvailability.getAvailabilityRules()))
+                .withUnavailabilities(getDatesByRules(productAvailability.getUnavailabilityRules()))
                 .build();
+    }
+
+    private List<LocalDate> getDatesByRules(List<ProductAvailabilityRule> productAvailabilityRules) {
+        return productAvailabilityRules.stream()
+                .map(productAvailabilityRule ->
+                        this.getDatesBetween(productAvailabilityRule.getStartDate(), productAvailabilityRule.getEndDate()))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    private List<LocalDate> getDatesBetween(LocalDate startDate, LocalDate endDate) {
+        return IntStream.iterate(0, i -> i + 1)
+                .limit(ChronoUnit.DAYS.between(startDate, endDate))
+                .mapToObj(startDate::plusDays)
+                .collect(Collectors.toList());
     }
 
     @EventSubscriber

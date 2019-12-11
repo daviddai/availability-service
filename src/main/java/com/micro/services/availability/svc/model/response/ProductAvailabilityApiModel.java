@@ -1,6 +1,6 @@
 package com.micro.services.availability.svc.model.response;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -9,15 +9,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProductAvailabilityApiModel {
 
     private String productCode;
-    private List<Date> availabilities;
-    private List<Date> unavailabilities;
+    private List<LocalDate> availabilities;
+    private List<LocalDate> unavailabilities;
 
     private ProductAvailabilityApiModel() {}
 
     @JsonCreator
     public ProductAvailabilityApiModel(@JsonProperty("productCode") String productCode,
-                                       @JsonProperty("availabilities") List<Date> availabilities,
-                                       @JsonProperty("unavailabilities") List<Date> unavailabilities) {
+                                       @JsonProperty("availabilities") List<LocalDate> availabilities,
+                                       @JsonProperty("unavailabilities") List<LocalDate> unavailabilities) {
         this.productCode = productCode;
         this.availabilities = availabilities;
         this.unavailabilities = unavailabilities;
@@ -27,11 +27,11 @@ public class ProductAvailabilityApiModel {
         return productCode;
     }
 
-    public List<Date> getAvailabilities() {
+    public List<LocalDate> getAvailabilities() {
         return availabilities;
     }
 
-    public List<Date> getUnavailabilities() {
+    public List<LocalDate> getUnavailabilities() {
         return unavailabilities;
     }
 
@@ -48,12 +48,12 @@ public class ProductAvailabilityApiModel {
             return this;
         }
 
-        public Builder withAvailabilities(List<Date> availabilities) {
+        public Builder withAvailabilities(List<LocalDate> availabilities) {
             productAvailabilityApiModel.availabilities = availabilities;
             return this;
         }
 
-        public Builder withUnavailabilities(List<Date> unavailabilities) {
+        public Builder withUnavailabilities(List<LocalDate> unavailabilities) {
             productAvailabilityApiModel.unavailabilities = unavailabilities;
             return this;
         }
